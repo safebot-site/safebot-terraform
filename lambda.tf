@@ -4,8 +4,8 @@ resource "aws_lambda_function" "safebot" {
   role          = aws_iam_role.safebot_lambda_role.arn
   runtime       = "python3.10"
 
-  filename         = "safebot.zip"
-  source_code_hash = filebase64sha256("safebot.zip")
+  filename         = "api.zip"
+  source_code_hash = filebase64sha256("api.zip")
 
   timeout     = 20
   memory_size = 128
