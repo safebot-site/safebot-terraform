@@ -38,6 +38,8 @@ resource "aws_iam_role" "safebot_lambda_role" {
   description        = "Safebot lambda role"
   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 
+  count = 0
+
   tags = local.common_tags
 }
 
@@ -46,6 +48,8 @@ resource "aws_iam_policy" "create_logs_cloudwatch_policy" {
   name        = "create-cloudwatch-logs-policy"
   description = "Safebot create cloudwatch logs policy"
   policy      = data.aws_iam_policy_document.safebot_create_logs_cloudwatch.json
+
+  count = 0
 }
 
 # Attaches a Managed IAM Policy to an IAM role
