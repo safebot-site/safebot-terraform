@@ -1,1 +1,0 @@
-variable "pg_backend" {}
