@@ -41,7 +41,7 @@ resource "aws_apigatewayv2_route" "safebot" {
   api_id = aws_apigatewayv2_api.lambda.id
 
   route_key = "ANY /verify"
-  target    = "integrations/${aws_apigatewayv2_integration.safebot.id}"
+  target    = "/${aws_apigatewayv2_integration.safebot.id}"
 }
 
 resource "aws_cloudwatch_log_group" "api_gw" {
