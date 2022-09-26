@@ -32,21 +32,21 @@ data "aws_iam_policy_document" "safebot_create_logs_cloudwatch" {
   }
 }
 
-# # Provides an IAM role
-# resource "aws_iam_role" "safebot_lambda_role" {
-#   name               = "safebot-lambda-role"
-#   description        = "Safebot lambda role"
-#   assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+# Provides an IAM role
+resource "aws_iam_role" "safebot_lambda_role" {
+  name               = "safebot-lambda-role"
+  description        = "Safebot lambda role"
+  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
 
-#   tags = local.common_tags
-# }
+  tags = local.common_tags
+}
 
-# # Provides an IAM policy
-# resource "aws_iam_policy" "create_logs_cloudwatch_policy" {
-#   name        = "create-cloudwatch-logs-policy"
-#   description = "Safebot create cloudwatch logs policy"
-#   policy      = data.aws_iam_policy_document.safebot_create_logs_cloudwatch.json
-# }
+# Provides an IAM policy
+resource "aws_iam_policy" "create_logs_cloudwatch_policy" {
+  name        = "create-cloudwatch-logs-policy"
+  description = "Safebot create cloudwatch logs policy"
+  policy      = data.aws_iam_policy_document.safebot_create_logs_cloudwatch.json
+}
 
 # Attaches a Managed IAM Policy to an IAM role
 resource "aws_iam_role_policy_attachment" "safebot_cloudwatch_attachment" {
