@@ -7,8 +7,4 @@ terraform {
   }
 }
 
-provider "aws" {
-  region                      = "sa-east-1"
-  access_key                  = "test"
-  secret_key                  = "test"
-}
+provider "aws" {}
