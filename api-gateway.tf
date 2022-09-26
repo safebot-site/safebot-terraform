@@ -39,7 +39,7 @@ resource "aws_apigatewayv2_integration" "safebot" {
 resource "aws_apigatewayv2_route" "safebot" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "POST /verify"
+  route_key = "ANY /{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.safebot.id}"
 }
 
