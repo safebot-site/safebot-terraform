@@ -6,7 +6,7 @@ resource "aws_apigatewayv2_api" "lambda" {
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "dev"
+  name        = "$default"
   auto_deploy = true
 
   access_log_settings {
@@ -40,7 +40,7 @@ resource "aws_apigatewayv2_integration" "safebot" {
 resource "aws_apigatewayv2_route" "safebot" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "ANY /${aws_apigatewayv2_stage.lambda.name}/verify"
+  route_key = "ANY /verify"
   target    = "integrations/${aws_apigatewayv2_integration.safebot.id}"
 }
 
