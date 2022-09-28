@@ -11,4 +11,10 @@ resource "aws_lambda_function" "safebot" {
   memory_size = 128
 
   tags = local.common_tags
+
+  environment {
+    variables = {
+      ENVIRONMENT = "dev"
+    }
+  }
 }
