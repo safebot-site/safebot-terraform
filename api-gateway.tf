@@ -6,7 +6,7 @@ resource "aws_api_gateway_rest_api" "api" {
   }
 }
 
-resource "aws_api_gateway_resource" "resource" {
+resource "aws_api_gateway_resource" "verify_resource" {
   path_part   = "verify"
   parent_id   = aws_api_gateway_rest_api.api.root_resource_id
   rest_api_id = aws_api_gateway_rest_api.api.id
@@ -14,7 +14,7 @@ resource "aws_api_gateway_resource" "resource" {
 
 resource "aws_api_gateway_resource" "proxy_resource" {
   path_part   = "{proxy+}"
-  parent_id   = aws_api_gateway_resource.resource
+  parent_id   = aws_api_gateway_resource.verify_resource.id
   rest_api_id = aws_api_gateway_rest_api.api.id
 }
 
@@ -27,7 +27,7 @@ resource "aws_api_gateway_method" "method" {
 
 resource "aws_api_gateway_integration" "integration" {
   rest_api_id             = aws_api_gateway_rest_api.api.id
-  resource_id             = aws_api_gateway_resource.resource.id
+  resource_id             = aws_api_gateway_resource.proxy_resource.id
   http_method             = aws_api_gateway_method.method.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
