@@ -1,24 +1,4 @@
-resource "aws_api_gateway_rest_api" "safebot" {
-  body = jsonencode({
-    openapi = "3.0.1"
-    info = {
-      title   = "safebot"
-      version = "1.0"
-    }
-    paths = {
-      "/verify/{proxy+}" = {
-        get = {
-          x-amazon-apigateway-integration = {
-            httpMethod           = "GET"
-            payloadFormatVersion = "1.0"
-            type                 = "AWS_PROXY"
-            uri                  = "arn:aws:lambda:sa-east-1:379156197353:function:verify"
-          }
-        }
-      }
-    }
-  })
-
+resource "aws_api_gateway_rest_api" "api" {
   name = "safebot_apigateway"
 
   endpoint_configuration {
@@ -26,20 +6,41 @@ resource "aws_api_gateway_rest_api" "safebot" {
   }
 }
 
-resource "aws_api_gateway_deployment" "safebot" {
-  rest_api_id = aws_api_gateway_rest_api.safebot.id
-
-  triggers = {
-    redeployment = sha1(jsonencode(aws_api_gateway_rest_api.safebot.body))
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
+resource "aws_api_gateway_resource" "resource" {
+  path_part   = "verify"
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  rest_api_id = aws_api_gateway_rest_api.api.id
 }
 
-resource "aws_api_gateway_stage" "safebot" {
-  deployment_id = aws_api_gateway_deployment.safebot.id
-  rest_api_id   = aws_api_gateway_rest_api.safebot.id
-  stage_name    = "dev"
+resource "aws_api_gateway_resource" "proxy_resource" {
+  path_part   = "{proxy+}"
+  parent_id   = aws_api_gateway_resource.resource
+  rest_api_id = aws_api_gateway_rest_api.api.id
+}
+
+resource "aws_api_gateway_method" "method" {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.proxy_resource.id
+  http_method   = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "integration" {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.resource.id
+  http_method             = aws_api_gateway_method.method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.safebot.invoke_arn
+}
+
+# Lambda
+resource "aws_lambda_permission" "apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.safebot.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+  source_arn = "arn:aws:execute-api:${var.myregion}:${var.accountId}:${aws_api_gateway_rest_api.api.id}/*/${aws_api_gateway_method.method.http_method}${aws_api_gateway_resource.resource.path}"
 }
