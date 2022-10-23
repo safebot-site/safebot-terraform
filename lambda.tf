@@ -1,6 +1,6 @@
 resource "aws_lambda_function" "safebot" {
   function_name = "verify"
-  handler       = "main.lambda_handler"
+  handler       = "safebot.main.lambda_handler"
   role          = aws_iam_role.safebot_lambda_role.arn
   runtime       = "python3.9"
 
