@@ -33,7 +33,7 @@ resource "aws_apigatewayv2_integration" "safebot" {
 
   integration_uri    = aws_lambda_function.safebot.invoke_arn
   integration_type   = "AWS_PROXY"
-  integration_method = "GET"
+  integration_method = "POST"
   payload_format_version  = "2.0"
 }
 
